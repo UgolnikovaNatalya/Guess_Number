@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/startFragment">
+
+    <fragment
+        android:id="@+id/startFragment"
+        android:name="com.example.guessnumbernav.activities.StartFragment"
+        android:label="StartFragment"
+        tools:layout="@layout/fragment_start">
+        <action
+            android:id="@+id/action_start_to_computer"
+            app:destination="@id/computerFragment" />
+        <action
+            android:id="@+id/action_start_to_friend"
+            app:destination="@id/friendFragment"
+            />
+    </fragment>
+    <fragment
+        android:id="@+id/friendFragment"
+        android:name="com.example.guessnumbernav.activities.FriendFragment"
+        android:label="FriendFragment"
+        tools:layout="@layout/fragment_friend">
+        <action
+            android:id="@+id/action_friend_to_game"
+            app:destination="@id/gameFragment"
+            app:popUpTo="@id/startFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/computerFragment"
+        android:name="com.example.guessnumbernav.activities.ComputerFragment"
+        android:label="ComputerFragment"
+        tools:layout="@layout/fragment_comp"
+        >
+        <action
+            android:id="@+id/action_computer_to_game"
+            app:destination="@id/gameFragment"
+            app:popUpTo="@id/startFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.example.guessnumbernav.activities.GameFragment"
+        android:label="GameFragment"
+        tools:layout="@layout/fragment_game">
+        <argument
+            android:name="magicNumber"
+            app:argType="integer"
+            android:defaultValue="-1" />
+    </fragment>
+</navigation>
