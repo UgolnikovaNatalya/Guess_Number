@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.guessnumbernav.R
 import java.lang.NumberFormatException
 
-private const val ATTEMPTS_DEFAULT = 8
+private const val ATTEMPTS_DEFAULT = 7
 private const val MAX_NUMBER = 100
 
 enum class Smiles {
@@ -71,19 +71,19 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         _greetingVisible.value = true
         _smileVisible.value = true
         Log.e("se", "${attempts.value} - attempts load()")
-        when{
+        when {
             attempts.value == ATTEMPTS_DEFAULT -> {
                 _greetingVisible.value = true
                 _greetingText.value =
-                    getMessage(R.string.play_greet, attempts.value?.minus(1))
+                    getMessage(R.string.play_greet, attempts.value)
                 _userNumberFieldVisible.value = true
                 _btnTryVisible.value = true
                 _btnAgainVisible.value = false
                 _smilePicture.value = Smiles.SMILE
             }
 
-                }
-            }
+        }
+    }
 
     fun compareNumbers(usNum: String) {
         Log.e("se", "${attempts.value} attempts compare")
@@ -98,7 +98,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     _toast.value = Toasts.BIGGER
                 }
                 else -> {
-                    attempts.value = attempts.value?.minus(1)
                     Log.e("se", "${attempts.value}  attempts -compare")
                     if (magNumber == usNum.toInt()) {
                         _greetingText.value = getMessage(R.string.win)
@@ -108,7 +107,8 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         _smilePicture.value = Smiles.WIN
                     }
                     if (magNumber > usNum.toInt()) {
-                        _greetingText.value = getMessage(R.string.less, attempts.value?.minus(1))
+                        _greetingText.value =
+                            getMessage(R.string.less, attempts.value)
                         _userNumberFieldVisible.value = true
                         _userNumberText.value = ""
                         _btnTryVisible.value = true
@@ -116,13 +116,15 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         _smilePicture.value = Smiles.SAD
                     }
                     if (magNumber < usNum.toInt()) {
-                        _greetingText.value = getMessage(R.string.bigger, attempts.value?.minus(1))
+                        _greetingText.value =
+                            getMessage(R.string.bigger, attempts.value)
                         _userNumberFieldVisible.value = true
                         _userNumberText.value = ""
                         _btnTryVisible.value = true
                         _btnAgainVisible.value = false
                         _smilePicture.value = Smiles.SAD
                     }
+
                     if (attempts.value?.toInt() == 0) {
                         _greetingText.value = getMessage(R.string.loose, magNumber)
                         _userNumberFieldVisible.value = false
@@ -130,13 +132,15 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         _btnAgainVisible.value = true
                         _smilePicture.value = Smiles.CRY
                     }
-                    Log.e("se", "${attempts.value} - ettempts def -compare")
+
+                    Log.e("se", "${attempts.value} - attempts def -compare")
                 }
             }
+
         } catch (e: NumberFormatException) {
             Log.e("error", "Fail format")
         }
-
+        attempts.value = attempts.value?.minus(1)
     }
 
 
