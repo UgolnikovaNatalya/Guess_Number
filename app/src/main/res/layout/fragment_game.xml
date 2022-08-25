@@ -2,79 +2,103 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_game"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/root_game"
     android:background="@color/main_bg">
 
-        <TextView
-            android:id="@+id/play_greet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="26sp"
-            tools:ignore="HardcodedText,MissingConstraints"
-            android:textAlignment="center"
-            android:textColor="@color/greeting_txt"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="50dp"
-            android:layout_marginEnd="18dp"
-            android:layout_marginStart="18dp"
-            />
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/play_smile"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:background="@android:color/transparent"
-            app:layout_constraintTop_toBottomOf="@id/play_greet"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="15dp"
-            />
-
-        <EditText
-            android:id="@+id/play_try_number"
+        <LinearLayout
+            android:id="@+id/scroll_Lin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="18dp"
-            android:backgroundTint="#FFDD00"
-            android:inputType="number"
-            android:textAlignment="center"
-            android:textColor="#FFDD00"
-            android:textSize="@dimen/button_text"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/play_smile" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/play_btn_try"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/play_btn_try"
-            android:textSize="@dimen/button_text"
-            android:backgroundTint="@color/greeting_txt"
-            app:layout_constraintTop_toBottomOf="@id/play_try_number"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="18dp"/>
+            <TextView
+                android:id="@+id/play_greet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="18dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="18dp"
+                android:textAlignment="center"
+                android:textColor="@color/greeting_txt"
+                android:textSize="26sp"
+                android:layout_gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText,MissingConstraints" />
 
-        <Button
-            android:id="@+id/play_btn_again"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="@string/play_btn_again"
-            android:textSize="@dimen/button_text"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/greeting_txt"
-            android:visibility="invisible"
-            app:layout_constraintTop_toBottomOf="@id/play_try_number"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="18dp"/>
+            <ImageView
+                android:id="@+id/play_smile"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="15dp"
+                android:background="@android:color/transparent"
+                android:layout_gravity="center"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/play_greet" />
+
+            <EditText
+                android:id="@+id/play_try_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="18dp"
+                android:backgroundTint="#FFDD00"
+                android:inputType="number"
+                android:textAlignment="center"
+                android:textColor="#FFDD00"
+                android:textSize="@dimen/button_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/play_smile" />
+
+            <Button
+                android:id="@+id/play_btn_try"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_margin="18dp"
+                android:backgroundTint="@color/greeting_txt"
+                android:text="@string/play_btn_try"
+                android:textSize="@dimen/button_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/play_try_number" />
+
+            <Button
+                android:id="@+id/play_btn_again"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_margin="18dp"
+                android:backgroundTint="@color/greeting_txt"
+                android:text="@string/play_btn_again"
+                android:textColor="@color/white"
+                android:textSize="@dimen/button_text"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/play_try_number" />
+
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

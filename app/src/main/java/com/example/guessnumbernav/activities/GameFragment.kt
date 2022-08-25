@@ -46,15 +46,14 @@ class GameFragment : Fragment() {
         setFragmentResultListener(KEY_MAGIC_NUMBER) { key, bundle ->
             val res = bundle.getInt(KEY_MAGIC_BUNDLE)
             val friendNumber = bundle.getString(KEY_MAGIC_BUNDLE)
-            if (friendNumber != null){
+            if (friendNumber != null) {
                 viewModel.getMagicNUmber(friendNumber.toInt())
-            }else{
+            } else {
                 viewModel.getMagicNUmber(res)
             }
             Log.e("fr", "$res - res GameFragment setFRL")
             Log.e("fr", "$friendNumber - friendNumber GameFragment setFRL")
         }
-
 
         //focusing
         vb.playTryNumber.requestFocus()
@@ -63,13 +62,11 @@ class GameFragment : Fragment() {
 
         //* * * * * Game * * * *
         vb.playBtnTry.setOnClickListener {
-            viewModel.getUserNumber(vb.playTryNumber.text.toString())
             viewModel.compareNumbers(vb.playTryNumber.text.toString())
         }
 
         //* * * * * Again * * * * *
         vb.playBtnAgain.setOnClickListener {
-
             findNavController().popBackStack()
         }
 
@@ -91,11 +88,11 @@ class GameFragment : Fragment() {
             vb.playBtnAgain.isVisible = it
         }
 
-        viewModel.tryNumberFieldVisible.observe(viewLifecycleOwner) {
+        viewModel.userNumberFieldVisible.observe(viewLifecycleOwner) {
             vb.playTryNumber.isVisible = it
         }
 
-        viewModel.tryNumberFieldText.observe(viewLifecycleOwner) {
+        viewModel.userNumberText.observe(viewLifecycleOwner) {
             vb.playTryNumber.setText(it)
         }
 
@@ -152,9 +149,14 @@ class GameFragment : Fragment() {
             }
         }
 
-        viewModel.usNumber.observe(viewLifecycleOwner){
-            viewModel.getUserNumber(vb.playTryNumber.text.toString())
+        viewModel.scrollView.observe(viewLifecycleOwner) {
+            vb.scroll.isVisible = it
         }
+
+//        viewModel.usNumber.observe(viewLifecycleOwner){ number ->
+//
+//            viewModel.getUserNumber(vb.playTryNumber.text.toString())
+//        }
 
         return view
     }
