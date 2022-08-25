@@ -41,6 +41,7 @@
             android:textColor="@color/greeting_txt"
             android:backgroundTint="@color/greeting_txt"
             android:textSize="@dimen/button_text"
+            android:maxLength="3"
             tools:ignore="HardcodedText" />
 
         <Button

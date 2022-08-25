@@ -1,67 +1,122 @@
 package com.example.guessnumbernav.activities
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.guessnumbernav.R
-import com.example.guessnumbernav.ViewModels.SharedViewModel
+import com.example.guessnumbernav.ViewModels.FriendViewModel
+import com.example.guessnumbernav.ViewModels.Toasts
 import com.example.guessnumbernav.databinding.FragmentFriendBinding
 
 class FriendFragment : Fragment() {
 
     private lateinit var vb: FragmentFriendBinding
-    private val viewModel : SharedViewModel by viewModels()
+    private val viewModel: FriendViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View? {
 
+        //binding
         vb = FragmentFriendBinding.inflate(inflater, container, false)
         val view = vb.rootFriend
 
-        viewModel.loadFriend()
+        //focus
+        vb.friendNumber.requestFocus()
 
+        //load fragment
+        viewModel.load()
+
+        //start game
         vb.friendStartGameBtn.setOnClickListener {
-//            viewModel.startGame(vb.friendNumber.text.toString())
-            findNavController().navigate(R.id.action_friend_to_game)
+
+            val friendNumber = vb.friendNumber.text.toString()
+
+            setFragmentResult(KEY_MAGIC_NUMBER, bundleOf(KEY_MAGIC_BUNDLE to friendNumber))
+            Log.e("fr", "$friendNumber - friendNumber FriendFragment setFragmentResult")
+            viewModel.startGame(friendNumber)
         }
 
-        viewModel.greetingVisible.observe(viewLifecycleOwner){
+
+//  ********** O B S E R V E R S ****************
+        viewModel.greetingVisible.observe(viewLifecycleOwner) {
             vb.friendGreeting.isVisible = it
         }
 
-        viewModel.greetingText.observe(viewLifecycleOwner){
+        viewModel.greetingText.observe(viewLifecycleOwner) {
             vb.friendGreeting.text = it
         }
 
-        viewModel.friendNumberVisible.observe(viewLifecycleOwner){
+        viewModel.friendNumberVisible.observe(viewLifecycleOwner) {
             vb.friendNumber.isVisible = it
         }
 
-        viewModel.friendNumberText.observe(viewLifecycleOwner){ number ->
+        viewModel.friendNumberText.observe(viewLifecycleOwner) { number ->
             vb.friendNumber.setText(number)
         }
 
-        viewModel.playBtnVisible.observe(viewLifecycleOwner){
+        viewModel.playBtnVisible.observe(viewLifecycleOwner) {
             vb.friendNumber.isVisible = it
         }
 
-        viewModel.linearVisible.observe(viewLifecycleOwner){
+        viewModel.linearVisible.observe(viewLifecycleOwner) {
             vb.friendLinear.isVisible = it
         }
 
-//        viewModel.toast.observe(viewLifecycleOwner) {
-//            it.let {
-//                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-//            }
-//        }
+        viewModel.toast.observe(viewLifecycleOwner) { toast ->
+            when (toast) {
+                Toasts.EMPTY -> {
+                    Toast.makeText(requireContext(), R.string.enter_number, Toast.LENGTH_SHORT)
+                        .show()
+                }
+                Toasts.BIGGER -> {
+                    Toast.makeText(requireContext(), R.string.number_is_bigger, Toast.LENGTH_SHORT)
+                        .show()
+                }
+                Toasts.ERROR -> {
+                    Toast.makeText(requireContext(), R.string.error_str_in_numb, Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+
+        viewModel.keyboardVisible.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                true -> {
+                    val imm =
+                        view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                }
+                false -> {
+                    val imm =
+                        view.context.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(vb.friendNumber.windowToken, 0)
+                }
+            }
+        }
+
+        viewModel.nextFragment.observe(viewLifecycleOwner) { state ->
+            when (state) {
+                true -> {
+                    findNavController().navigate(R.id.action_friend_to_game)
+                }
+                false -> {}
+            }
+        }
 
         return view
     }

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Magic Number</string>
 <!--    Messages for main activity-->
-    <string name="user_enter_number">Enter you magic number</string>
+    <string name="user_enter_number">Enter you magic number\n</string>
 
     <!--    Start activity-->
     <string name="choose_play">Who you want to play with?</string>
@@ -17,8 +17,7 @@
 
     <!--    Messages for toast-->
     <string name="enter_number">Please enter your number</string>
-    <string name="start_bigger">Magic number is bigger than 100</string>
-    <string name="try_bigger">Your number is bigger than 100</string>
+    <string name="number_is_bigger">Your number is bigger than 100</string>
     <string name="error_str_in_numb">Your magic number has letters</string>
 
 
@@ -32,5 +31,6 @@
     <!--    Text for computerGame activity-->
     <string name="comp_greet">Hello!\nPress the button to generate a magic number!</string>
     <string name="comp_generate">Android has already came up with a number!\n\Let\'s start!</string>
+    <string name="empty" />
 
 </resources>
