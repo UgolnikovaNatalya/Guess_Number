@@ -46,7 +46,6 @@ class ComputerFragment() : Fragment(){
             number = viewModel.generateNumber()
 
             setFragmentResult(KEY_MAGIC_NUMBER, bundleOf(KEY_MAGIC_BUNDLE to number))
-            setFragmentResult(KEY_ATTEMPT, bundleOf(KEY_ATTEMPT_BUNDLE to DEFAULT_ATTEMPTS))
         }
 
         //start game

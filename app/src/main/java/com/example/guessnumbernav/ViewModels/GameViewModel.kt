@@ -60,6 +60,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         magNumber = number
     }
 
+
     //get user number
     private var userNumber = _userNumberText.value
 
@@ -69,6 +70,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         _greetingVisible.value = true
         _smileVisible.value = true
         _keyBoardVisible.value = true
+        Log.e("n", "$magNumber - mgNUm vm load")
         try {
             when {
                 attempts.value == ATTEMPTS_DEFAULT -> {
@@ -81,7 +83,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     _smilePicture.value = Smiles.SMILE
                 }
             }
-        }catch (e:NullPointerException){
+        } catch (e: NullPointerException) {
             _toast.value = Toasts.ERROR
         }
     }
@@ -116,7 +118,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                             _btnTryVisible.value = true
                             _btnAgainVisible.value = false
                             _smilePicture.value = Smiles.SAD
-                            Log.e("se", "m>u")
                         }
                         magNumber < usNum.toInt() -> {
                             _greetingText.value =
@@ -126,7 +127,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                             _btnTryVisible.value = true
                             _btnAgainVisible.value = false
                             _smilePicture.value = Smiles.SAD
-                            Log.e("se", "m<u")
                         }
                     }
                 }
@@ -145,7 +145,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         _btnAgainVisible.value = true
                         _smilePicture.value = Smiles.CRY
                         _keyBoardVisible.value = false
-                        Log.e("se", "loose")
                     }
                 }
             }
