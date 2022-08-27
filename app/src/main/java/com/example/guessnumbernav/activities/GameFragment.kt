@@ -38,9 +38,10 @@ class GameFragment : Fragment() {
     private var magicNumber = -11
 
 
+    //for magic number state after rotation and pause
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.getMagicNUmber(savedInstanceState?.getInt(KEY_MAGIC_NUM)?:-33)
+        viewModel.getMagicNUmber(savedInstanceState?.getInt(KEY_MAGIC_NUM) ?: -33)
 
         Log.e("m", "onCreate")
 
@@ -53,6 +54,7 @@ class GameFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
+        magicNumber = savedInstanceState?.getInt(KEY_MAGIC_NUM) ?: -33
 
         Log.e("m", "onCreateView")
 
@@ -61,17 +63,17 @@ class GameFragment : Fragment() {
 
         setFragmentResultListener(KEY_MAGIC_NUMBER) { key, bundle ->
 
-                val res = bundle.getInt(KEY_MAGIC_BUNDLE)
-                val friendNumber = bundle.getString(KEY_MAGIC_BUNDLE)
+            val res = bundle.getInt(KEY_MAGIC_BUNDLE)
+            val friendNumber = bundle.getString(KEY_MAGIC_BUNDLE)
 
 
-                if (friendNumber != null) {
-                    viewModel.getMagicNUmber(friendNumber.toInt())
-                    magicNumber = friendNumber.toInt()
-                } else {
-                    viewModel.getMagicNUmber(res)
-                    magicNumber = res
-                }
+            if (friendNumber != null) {
+                viewModel.getMagicNUmber(friendNumber.toInt())
+                magicNumber = friendNumber.toInt()
+            } else {
+                viewModel.getMagicNUmber(res)
+                magicNumber = res
+            }
 
             Log.e("m", "$magicNumber - magic number setFragRes")
             Log.e("m", "onCreateView")
@@ -180,7 +182,7 @@ class GameFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val number = savedInstanceState?.getString(KEY_USER_NUMBER)?:""
+        val number = savedInstanceState?.getString(KEY_USER_NUMBER) ?: "225"
         vb.playTryNumber.setText(number)
 
         Log.e(",", "${vb.playTryNumber.text} try number text")
@@ -189,8 +191,8 @@ class GameFragment : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(KEY_USER_NUMBER, vb.playTryNumber.text.toString())
         outState.putInt(KEY_MAGIC_NUM, magicNumber)
+        outState.putString(KEY_USER_NUMBER, vb.playTryNumber.text.toString())
 
         Log.e("m", "onSaveInstanceState")
         Log.e("m", "$magicNumber - mg onSaveInstanceState")
