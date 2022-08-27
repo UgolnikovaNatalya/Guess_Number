@@ -20,6 +20,8 @@ import com.example.guessnumbernav.ViewModels.GameViewModel
 import com.example.guessnumbernav.ViewModels.Smiles
 import com.example.guessnumbernav.ViewModels.Toasts
 import com.example.guessnumbernav.databinding.FragmentGameBinding
+import java.lang.ClassCastException
+import java.lang.NullPointerException
 
 const val KEY_USER_NUMBER = "number"
 const val KEY_MAGIC_NUM = "mn"
@@ -39,6 +41,9 @@ class GameFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.getMagicNUmber(savedInstanceState?.getInt(KEY_MAGIC_NUM)?:-33)
+
+        Log.e("m", "onCreate")
+
     }
 
     //-------- o n C r e a t e V i e w -------------------
@@ -49,25 +54,28 @@ class GameFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View? {
 
+        Log.e("m", "onCreateView")
+
         _vb = FragmentGameBinding.inflate(inflater, container, false)
         val view = vb.rootGame
 
         setFragmentResultListener(KEY_MAGIC_NUMBER) { key, bundle ->
-            val res = bundle.getInt(KEY_MAGIC_BUNDLE)
-            val friendNumber = bundle.getString(KEY_MAGIC_BUNDLE)
 
-            if (friendNumber != null) {
-                viewModel.getMagicNUmber(friendNumber.toInt())
-                magicNumber = friendNumber.toInt()
-            } else {
-                viewModel.getMagicNUmber(res)
-                magicNumber = res
-            }
+                val res = bundle.getInt(KEY_MAGIC_BUNDLE)
+                val friendNumber = bundle.getString(KEY_MAGIC_BUNDLE)
+
+
+                if (friendNumber != null) {
+                    viewModel.getMagicNUmber(friendNumber.toInt())
+                    magicNumber = friendNumber.toInt()
+                } else {
+                    viewModel.getMagicNUmber(res)
+                    magicNumber = res
+                }
+
             Log.e("m", "$magicNumber - magic number setFragRes")
             Log.e("m", "onCreateView")
         }
-
-
 
         //focusing
         vb.playTryNumber.requestFocus()
@@ -171,10 +179,12 @@ class GameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e("m", "onViewCreated")
+
         val number = savedInstanceState?.getString(KEY_USER_NUMBER)?:""
         vb.playTryNumber.setText(number)
+
         Log.e(",", "${vb.playTryNumber.text} try number text")
+        Log.e("m", "onViewCreated")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -182,7 +192,8 @@ class GameFragment : Fragment() {
         outState.putString(KEY_USER_NUMBER, vb.playTryNumber.text.toString())
         outState.putInt(KEY_MAGIC_NUM, magicNumber)
 
-        Log.e("m", "$magicNumber - mg onSaved")
+        Log.e("m", "onSaveInstanceState")
+        Log.e("m", "$magicNumber - mg onSaveInstanceState")
     }
 
 }
