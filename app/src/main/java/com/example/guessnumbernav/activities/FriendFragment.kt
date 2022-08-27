@@ -99,7 +99,7 @@ class FriendFragment : Fragment() {
                 true -> {
                     val imm =
                         view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                    imm.showSoftInput(vb.friendNumber, 0)
                 }
                 false -> {
                     val imm =

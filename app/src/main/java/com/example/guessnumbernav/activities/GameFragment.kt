@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,7 +22,7 @@ import com.example.guessnumbernav.ViewModels.Smiles
 import com.example.guessnumbernav.ViewModels.Toasts
 import com.example.guessnumbernav.databinding.FragmentGameBinding
 
-
+const val KEY_NUMBER = "number"
 class GameFragment : Fragment() {
 
     //bind
@@ -31,7 +32,16 @@ class GameFragment : Fragment() {
     //viewModel
     private val viewModel: GameViewModel by viewModels()
 
-    //--------onCreateView-------------------
+    //    ******** o n C r e a t e ***********
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        val text = savedInstanceState?.getString("KEY_NUMBER")?:""
+//        vb.playTryNumber.setText(text)
+//
+//        Log.e("txt", "$text - text onCreate")
+//    }
+
+    //-------- o n C r e a t e V i e w -------------------
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,8 +61,6 @@ class GameFragment : Fragment() {
             } else {
                 viewModel.getMagicNUmber(res)
             }
-            Log.e("fr", "$res - res GameFragment setFRL")
-            Log.e("fr", "$friendNumber - friendNumber GameFragment setFRL")
         }
 
         //focusing
@@ -70,7 +78,6 @@ class GameFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-
 //************************ O B S E R V E R S ****************************
         viewModel.greetingVisible.observe(viewLifecycleOwner) {
             vb.playGreet.isVisible = it
@@ -84,7 +91,7 @@ class GameFragment : Fragment() {
             vb.playBtnTry.isVisible = it
         }
 
-        viewModel.againBtnVisible.observe(viewLifecycleOwner) {
+        viewModel.btnAgainVisible.observe(viewLifecycleOwner) {
             vb.playBtnAgain.isVisible = it
         }
 
@@ -139,7 +146,7 @@ class GameFragment : Fragment() {
                 true -> {
                     val imm =
                         view.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+                    imm.showSoftInput(vb.playTryNumber, 0)
                 }
                 false -> {
                     val imm =
@@ -153,12 +160,12 @@ class GameFragment : Fragment() {
             vb.scroll.isVisible = it
         }
 
-//        viewModel.usNumber.observe(viewLifecycleOwner){ number ->
-//
-//            viewModel.getUserNumber(vb.playTryNumber.text.toString())
-//        }
-
         return view
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(KEY_NUMBER, vb.playTryNumber.text.toString())
     }
 
 }
