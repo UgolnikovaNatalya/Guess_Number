@@ -56,6 +56,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
     //get magic number
     private var magNumber = -1
+
+
+    // magNumber должно быть LiveData
     fun getMagicNUmber(number: Int) {
         magNumber = number
     }

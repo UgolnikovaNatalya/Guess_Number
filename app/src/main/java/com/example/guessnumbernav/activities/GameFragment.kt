@@ -35,44 +35,60 @@ class GameFragment : Fragment() {
     //viewModel
     private val viewModel: GameViewModel by viewModels()
 
+    // логика на фрагменте, поле убрать
     private var magicNumber = -11
 
 
     //for magic number state after rotation and pause
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.getMagicNUmber(savedInstanceState?.getInt(KEY_MAGIC_NUM) ?: -33)
 
-        Log.e("m", "onCreate")
 
-    }
+    // onCreate убрать
+
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        super.onCreate(savedInstanceState)
+//        viewModel.getMagicNUmber(savedInstanceState?.getInt(KEY_MAGIC_NUM) ?: -33)
+//
+//        Log.e("m", "onCreate")
+//
+//    }
 
     //-------- o n C r e a t e V i e w -------------------
+    // Здесь происходит ТОЛЬКО inflating view
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         magicNumber = savedInstanceState?.getInt(KEY_MAGIC_NUM) ?: -33
 
         Log.e("m", "onCreateView")
 
         _vb = FragmentGameBinding.inflate(inflater, container, false)
-        val view = vb.rootGame
+
+        return vb.rootGame
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val number = savedInstanceState?.getString(KEY_USER_NUMBER) ?: "225"
+
+        vb.playTryNumber.setText(number)
 
         setFragmentResultListener(KEY_MAGIC_NUMBER) { key, bundle ->
 
+            // Почему используются два одинаковых ключа?
+            // Ключи должны быть разные
             val res = bundle.getInt(KEY_MAGIC_BUNDLE)
             val friendNumber = bundle.getString(KEY_MAGIC_BUNDLE)
 
-
-            if (friendNumber != null) {
+            magicNumber = if (friendNumber != null) {
                 viewModel.getMagicNUmber(friendNumber.toInt())
-                magicNumber = friendNumber.toInt()
+                friendNumber.toInt()
             } else {
                 viewModel.getMagicNUmber(res)
-                magicNumber = res
+                res
             }
 
             Log.e("m", "$magicNumber - magic number setFragRes")
@@ -119,42 +135,31 @@ class GameFragment : Fragment() {
             vb.playTryNumber.setText(it)
         }
 
+        // Обновил, сравни текущий вариант со старым
         viewModel.smilePicture.observe(viewLifecycleOwner) { picture ->
-            when (picture) {
-                Smiles.WIN -> {
-                    vb.playSmile.setImageResource(R.drawable.win)
-                }
-                Smiles.SMILE -> {
-                    vb.playSmile.setImageResource(R.drawable.smile)
-                }
-                Smiles.SAD -> {
-                    vb.playSmile.setImageResource(R.drawable.sad_smile)
-                }
-                Smiles.CRY -> {
-                    vb.playSmile.setImageResource(R.drawable.cry)
-                }
+            val res = when (picture) {
+                Smiles.WIN -> R.drawable.win
+                Smiles.SMILE -> R.drawable.smile
+                Smiles.SAD -> R.drawable.sad_smile
+                Smiles.CRY -> R.drawable.cry
             }
+
+            vb.playSmile.setImageResource(res)
         }
 
         viewModel.smileVisible.observe(viewLifecycleOwner) {
             vb.playSmile.isVisible = it
         }
 
+        // Обновил, сравни текущий вариант со старым
         viewModel.toast.observe(viewLifecycleOwner) { toast ->
-            when (toast) {
-                Toasts.EMPTY -> {
-                    Toast.makeText(requireContext(), R.string.enter_number, Toast.LENGTH_SHORT)
-                        .show()
-                }
-                Toasts.BIGGER -> {
-                    Toast.makeText(requireContext(), R.string.number_is_bigger, Toast.LENGTH_SHORT)
-                        .show()
-                }
-                Toasts.ERROR -> {
-                    Toast.makeText(requireContext(), R.string.error_str_in_numb, Toast.LENGTH_SHORT)
-                        .show()
-                }
+            val text = when (toast) {
+                Toasts.EMPTY -> R.string.enter_number
+                Toasts.BIGGER -> R.string.number_is_bigger
+                Toasts.ERROR -> R.string.error_str_in_numb
             }
+
+            Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
         }
 
         viewModel.keyboardVisible.observe(viewLifecycleOwner) { state ->
@@ -176,19 +181,14 @@ class GameFragment : Fragment() {
             vb.scroll.isVisible = it
         }
 
-        return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val number = savedInstanceState?.getString(KEY_USER_NUMBER) ?: "225"
-        vb.playTryNumber.setText(number)
-
         Log.e(",", "${vb.playTryNumber.text} try number text")
         Log.e("m", "onViewCreated")
     }
 
+    // Если поправить magicNumber в GameViewModel и сделать его LiveData не придется сохранять состояние
+    // как итог меньше багов и логика разруливается в одном месте
+
+    // Тоже самое касается KEY_USER_NUMBER
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(KEY_MAGIC_NUM, magicNumber)
