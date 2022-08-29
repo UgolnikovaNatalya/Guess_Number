@@ -2,6 +2,7 @@ package com.example.guessnumbernav.ViewModels
 
 import android.app.Application
 import android.util.Log
+import androidx.compose.runtime.currentComposer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -85,9 +86,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun compareNumbers() {
-
-    attempts.value = attempts.value?.minus(1)
-
+        attempts.value = attempts.value?.minus(1)
         try {
             when {
                 attempts.value!!.toInt() > 0 -> {
@@ -95,10 +94,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         userNumber.value.toString().isEmpty() || userNumber.value.toString().toInt() == 0 -> {
                             _userNumberText.value = ""
                             _toast.value = Toasts.EMPTY
+                            attempts.value = attempts.value?.plus(1)
                         }
                         userNumber.value.toString().toInt() > MAX_NUMBER -> {
                             _userNumberText.value = ""
                             _toast.value = Toasts.BIGGER
+                            attempts.value = attempts.value?.plus(1)
                         }
                         magicNumber.value == userNumber.value.toString().toInt() -> {
                             _greetingText.value = getMessage(R.string.win)
