@@ -19,6 +19,8 @@ import com.example.guessnumbernav.R
 import com.example.guessnumbernav.ViewModels.FriendViewModel
 import com.example.guessnumbernav.ViewModels.Toasts
 import com.example.guessnumbernav.databinding.FragmentFriendBinding
+const val KEY_USER_NUMBER = "KEY_USER_NUMBER"
+const val KEY_USER_BUNDLE = "KEY_USER_BUNDLE"
 
 class FriendFragment : Fragment() {
 
@@ -46,7 +48,7 @@ class FriendFragment : Fragment() {
 
             val friendNumber = vb.friendNumber.text.toString()
 
-            setFragmentResult(KEY_MAGIC_NUMBER, bundleOf(KEY_MAGIC_BUNDLE to friendNumber))
+            setFragmentResult(KEY_USER_NUMBER, bundleOf(KEY_USER_BUNDLE to friendNumber))
             Log.e("fr", "$friendNumber - friendNumber FriendFragment setFragmentResult")
             viewModel.startGame(friendNumber)
         }

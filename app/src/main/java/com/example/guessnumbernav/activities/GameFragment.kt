@@ -20,11 +20,6 @@ import com.example.guessnumbernav.ViewModels.GameViewModel
 import com.example.guessnumbernav.ViewModels.Smiles
 import com.example.guessnumbernav.ViewModels.Toasts
 import com.example.guessnumbernav.databinding.FragmentGameBinding
-import java.lang.ClassCastException
-import java.lang.NullPointerException
-
-const val KEY_USER_NUMBER = "number"
-const val KEY_MAGIC_NUM = "mn"
 
 class GameFragment : Fragment() {
 
@@ -35,18 +30,6 @@ class GameFragment : Fragment() {
     //viewModel
     private val viewModel: GameViewModel by viewModels()
 
-    private var magicNumber = -11
-
-
-    //for magic number state after rotation and pause
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel.getMagicNUmber(savedInstanceState?.getInt(KEY_MAGIC_NUM) ?: -33)
-
-        Log.e("m", "onCreate")
-
-    }
-
     //-------- o n C r e a t e V i e w -------------------
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreateView(
@@ -54,7 +37,6 @@ class GameFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-        magicNumber = savedInstanceState?.getInt(KEY_MAGIC_NUM) ?: -33
 
         Log.e("m", "onCreateView")
 
@@ -62,21 +44,13 @@ class GameFragment : Fragment() {
         val view = vb.rootGame
 
         setFragmentResultListener(KEY_MAGIC_NUMBER) { key, bundle ->
-
             val res = bundle.getInt(KEY_MAGIC_BUNDLE)
-            val friendNumber = bundle.getString(KEY_MAGIC_BUNDLE)
+            viewModel.magicNumber.value = res
+        }
 
-
-            if (friendNumber != null) {
-                viewModel.getMagicNUmber(friendNumber.toInt())
-                magicNumber = friendNumber.toInt()
-            } else {
-                viewModel.getMagicNUmber(res)
-                magicNumber = res
-            }
-
-            Log.e("m", "$magicNumber - magic number setFragRes")
-            Log.e("m", "onCreateView")
+        setFragmentResultListener(KEY_USER_NUMBER) { key, bundle ->
+            val friendNumber = bundle.getString(KEY_USER_BUNDLE)
+            viewModel.magicNumber.value = friendNumber?.toInt()
         }
 
         //focusing
@@ -86,7 +60,8 @@ class GameFragment : Fragment() {
 
         //* * * * * Game * * * *
         vb.playBtnTry.setOnClickListener {
-            viewModel.compareNumbers(vb.playTryNumber.text.toString())
+            viewModel.userNumber.value = vb.playTryNumber.text.toString()
+            viewModel.compareNumbers()
         }
 
         //* * * * * Again * * * * *
@@ -120,20 +95,13 @@ class GameFragment : Fragment() {
         }
 
         viewModel.smilePicture.observe(viewLifecycleOwner) { picture ->
-            when (picture) {
-                Smiles.WIN -> {
-                    vb.playSmile.setImageResource(R.drawable.win)
-                }
-                Smiles.SMILE -> {
-                    vb.playSmile.setImageResource(R.drawable.smile)
-                }
-                Smiles.SAD -> {
-                    vb.playSmile.setImageResource(R.drawable.sad_smile)
-                }
-                Smiles.CRY -> {
-                    vb.playSmile.setImageResource(R.drawable.cry)
-                }
+            val smile = when (picture) {
+                Smiles.WIN -> R.drawable.win
+                Smiles.SMILE -> R.drawable.smile
+                Smiles.SAD -> R.drawable.sad_smile
+                Smiles.CRY -> R.drawable.cry
             }
+            vb.playSmile.setImageResource(smile)
         }
 
         viewModel.smileVisible.observe(viewLifecycleOwner) {
@@ -141,20 +109,13 @@ class GameFragment : Fragment() {
         }
 
         viewModel.toast.observe(viewLifecycleOwner) { toast ->
-            when (toast) {
-                Toasts.EMPTY -> {
-                    Toast.makeText(requireContext(), R.string.enter_number, Toast.LENGTH_SHORT)
-                        .show()
-                }
-                Toasts.BIGGER -> {
-                    Toast.makeText(requireContext(), R.string.number_is_bigger, Toast.LENGTH_SHORT)
-                        .show()
-                }
-                Toasts.ERROR -> {
-                    Toast.makeText(requireContext(), R.string.error_str_in_numb, Toast.LENGTH_SHORT)
-                        .show()
-                }
+            val message = when (toast) {
+                Toasts.EMPTY -> R.string.enter_number
+                Toasts.BIGGER -> R.string.number_is_bigger
+                Toasts.ERROR -> R.string.error_str_in_numb
             }
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT)
+                .show()
         }
 
         viewModel.keyboardVisible.observe(viewLifecycleOwner) { state ->
@@ -177,25 +138,6 @@ class GameFragment : Fragment() {
         }
 
         return view
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val number = savedInstanceState?.getString(KEY_USER_NUMBER) ?: "225"
-        vb.playTryNumber.setText(number)
-
-        Log.e(",", "${vb.playTryNumber.text} try number text")
-        Log.e("m", "onViewCreated")
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putInt(KEY_MAGIC_NUM, magicNumber)
-        outState.putString(KEY_USER_NUMBER, vb.playTryNumber.text.toString())
-
-        Log.e("m", "onSaveInstanceState")
-        Log.e("m", "$magicNumber - mg onSaveInstanceState")
     }
 
 }

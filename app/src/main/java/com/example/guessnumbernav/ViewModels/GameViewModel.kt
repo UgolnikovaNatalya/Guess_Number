@@ -2,7 +2,6 @@ package com.example.guessnumbernav.ViewModels
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -35,7 +34,6 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val _btnTryVisible = MutableLiveData<Boolean>()
     private val _btnAgainVisible = MutableLiveData<Boolean>()
     private val _keyBoardVisible = MutableLiveData<Boolean>()
-
     private val _greetingText = MutableLiveData<String>()
     private val _smilePicture = MutableLiveData<Smiles>()
     private val _userNumberText = MutableLiveData<String>()
@@ -54,15 +52,12 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val keyboardVisible: LiveData<Boolean> = _keyBoardVisible
     val scrollView: LiveData<Boolean> = _scrollVisible
 
-    //get magic number
-    private var magNumber = -1
-    fun getMagicNUmber(number: Int) {
-        magNumber = number
+    val magicNumber : MutableLiveData<Int> by lazy {
+        MutableLiveData<Int>()
     }
-
-
-    //get user number
-    private var userNumber = _userNumberText.value
+    val userNumber : MutableLiveData<String> by lazy{
+        MutableLiveData<String>()
+    }
 
     // *************** L O A D ******************
     fun load() {
@@ -70,10 +65,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         _greetingVisible.value = true
         _smileVisible.value = true
         _keyBoardVisible.value = true
-        Log.e("n", "$magNumber - mgNUm vm load")
+
         try {
-            when {
-                attempts.value == ATTEMPTS_DEFAULT -> {
+            when (attempts.value) {
+                ATTEMPTS_DEFAULT -> {
                     _greetingVisible.value = true
                     _greetingText.value =
                         getMessage(R.string.play_greet, attempts.value)
@@ -86,23 +81,26 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
         } catch (e: NullPointerException) {
             _toast.value = Toasts.ERROR
         }
+
     }
 
-    fun compareNumbers(usNum: String) {
-        attempts.value = attempts.value?.minus(1)
+    fun compareNumbers() {
+
+    attempts.value = attempts.value?.minus(1)
+
         try {
             when {
                 attempts.value!!.toInt() > 0 -> {
                     when {
-                        usNum.isEmpty() || usNum.toInt() == 0 -> {
+                        userNumber.value.toString().isEmpty() || userNumber.value.toString().toInt() == 0 -> {
                             _userNumberText.value = ""
                             _toast.value = Toasts.EMPTY
                         }
-                        usNum.toInt() > MAX_NUMBER -> {
+                        userNumber.value.toString().toInt() > MAX_NUMBER -> {
                             _userNumberText.value = ""
                             _toast.value = Toasts.BIGGER
                         }
-                        magNumber == usNum.toInt() -> {
+                        magicNumber.value == userNumber.value.toString().toInt() -> {
                             _greetingText.value = getMessage(R.string.win)
                             _userNumberFieldVisible.value = false
                             _btnTryVisible.value = false
@@ -110,7 +108,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                             _smilePicture.value = Smiles.WIN
                             _keyBoardVisible.value = false
                         }
-                        magNumber > usNum.toInt() -> {
+                        (magicNumber.value ?: 0) > userNumber.value.toString().toInt() -> {
                             _greetingText.value =
                                 getMessage(R.string.less, attempts.value)
                             _userNumberFieldVisible.value = true
@@ -119,7 +117,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                             _btnAgainVisible.value = false
                             _smilePicture.value = Smiles.SAD
                         }
-                        magNumber < usNum.toInt() -> {
+                        (magicNumber.value ?: 0) < userNumber.value.toString().toInt() -> {
                             _greetingText.value =
                                 getMessage(R.string.bigger, attempts.value)
                             _userNumberFieldVisible.value = true
@@ -131,7 +129,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     }
                 }
                 attempts.value!!.toInt() < 1 -> {
-                    if (magNumber == usNum.toInt()) {
+                    if (magicNumber.value == userNumber.value.toString().toInt()) {
                         _greetingText.value = getMessage(R.string.win)
                         _userNumberFieldVisible.value = false
                         _btnTryVisible.value = false
@@ -139,7 +137,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                         _smilePicture.value = Smiles.WIN
                         _keyBoardVisible.value = false
                     } else {
-                        _greetingText.value = getMessage(R.string.loose, magNumber)
+                        _greetingText.value = getMessage(R.string.loose, magicNumber.value)
                         _userNumberFieldVisible.value = false
                         _btnTryVisible.value = false
                         _btnAgainVisible.value = true

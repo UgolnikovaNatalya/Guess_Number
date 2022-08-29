@@ -16,10 +16,6 @@ import com.example.guessnumbernav.databinding.FragmentCompBinding
 
 const val KEY_MAGIC_NUMBER = "key"
 const val KEY_MAGIC_BUNDLE = "bundle"
-const val KEY_ATTEMPT = "att"
-const val KEY_ATTEMPT_BUNDLE = "attempt"
-const val DEFAULT_ATTEMPTS = 7
-
 
 class ComputerFragment() : Fragment(){
 
