@@ -40,6 +40,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val _userNumberText = MutableLiveData<String>()
     private val _toast = MutableLiveData<Toasts>()
     private val attempts = MutableLiveData<Int>(ATTEMPTS_DEFAULT)
+
     val greetingVisible: LiveData<Boolean> = _greetingVisible
     val greetingText: LiveData<String> = _greetingText
     val smileVisible: LiveData<Boolean> = _smileVisible
@@ -148,8 +149,10 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             }
 
         } catch (e: NumberFormatException) {
-            Log.e("error", "Fail format")
+
         }
+        Log.e("", "${magicNumber.value} - comp number")
+        Log.e("", "${userNumberText.value} - text value")
     }
 
     private fun getMessage(text: Int): String {

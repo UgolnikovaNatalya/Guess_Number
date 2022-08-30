@@ -30,6 +30,13 @@ class GameFragment : Fragment() {
     //viewModel
     private val viewModel: GameViewModel by viewModels()
 
+    //restore magicNumber
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val t = savedInstanceState?.getInt("l")
+        viewModel.magicNumber.value = t
+    }
+
     //-------- o n C r e a t e V i e w -------------------
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreateView(
@@ -37,8 +44,7 @@ class GameFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
-
-        Log.e("m", "onCreateView")
+        Log.e("", "onCreateView f")
 
         _vb = FragmentGameBinding.inflate(inflater, container, false)
         val view = vb.rootGame
@@ -136,8 +142,12 @@ class GameFragment : Fragment() {
         viewModel.scrollView.observe(viewLifecycleOwner) {
             vb.scroll.isVisible = it
         }
-
         return view
     }
 
+    //save magicNumber
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("l", viewModel.magicNumber.value?.toInt() ?: -1)
+    }
 }
