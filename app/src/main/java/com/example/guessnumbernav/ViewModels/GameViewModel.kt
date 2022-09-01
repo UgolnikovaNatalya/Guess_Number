@@ -2,13 +2,10 @@ package com.example.guessnumbernav.ViewModels
 
 import android.app.Application
 import android.util.Log
-import androidx.compose.runtime.currentComposer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.guessnumbernav.R
-import java.lang.NullPointerException
-import java.lang.NumberFormatException
 
 private const val ATTEMPTS_DEFAULT = 7
 private const val MAX_NUMBER = 100
@@ -39,7 +36,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     private val _smilePicture = MutableLiveData<Smiles>()
     private val _userNumberText = MutableLiveData<String>()
     private val _toast = MutableLiveData<Toasts>()
-    private val attempts = MutableLiveData<Int>(ATTEMPTS_DEFAULT)
+    private val attempts = MutableLiveData<Int>()
 
     val greetingVisible: LiveData<Boolean> = _greetingVisible
     val greetingText: LiveData<String> = _greetingText
@@ -52,107 +49,119 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     val toast: LiveData<Toasts> = _toast
     val keyboardVisible: LiveData<Boolean> = _keyBoardVisible
     val scrollView: LiveData<Boolean> = _scrollVisible
+    val attemptsField: LiveData<Int> = attempts
 
-    val magicNumber : MutableLiveData<Int> by lazy {
+    val magicNumber: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>()
     }
-    val userNumber : MutableLiveData<String> by lazy{
+    val userNumber: MutableLiveData<String> by lazy {
         MutableLiveData<String>()
     }
 
     // *************** L O A D ******************
-    fun load() {
+    fun load(magicNumber: Int?, attempts: Int?) {
         _scrollVisible.value = true
         _greetingVisible.value = true
         _smileVisible.value = true
         _keyBoardVisible.value = true
 
-        try {
-            when (attempts.value) {
-                ATTEMPTS_DEFAULT -> {
-                    _greetingVisible.value = true
-                    _greetingText.value =
-                        getMessage(R.string.play_greet, attempts.value)
-                    _userNumberFieldVisible.value = true
-                    _btnTryVisible.value = true
-                    _btnAgainVisible.value = false
-                    _smilePicture.value = Smiles.SMILE
-                }
-            }
-        } catch (e: NullPointerException) {
-            _toast.value = Toasts.ERROR
+        this.attempts.value = attempts ?: ATTEMPTS_DEFAULT
+
+        if (magicNumber != null) {
+            this.magicNumber.value = magicNumber
         }
 
+        updateState()
     }
 
     fun compareNumbers() {
+        if (userNumber.value.toString().isEmpty() || userNumber.value.toString().toInt() == 0) {
+            _userNumberText.value = ""
+            _toast.value = Toasts.EMPTY
+            return
+        }
+
         attempts.value = attempts.value?.minus(1)
-        try {
-            when {
-                attempts.value!!.toInt() > 0 -> {
-                    when {
-                        userNumber.value.toString().isEmpty() || userNumber.value.toString().toInt() == 0 -> {
-                            _userNumberText.value = ""
-                            _toast.value = Toasts.EMPTY
-                            attempts.value = attempts.value?.plus(1)
-                        }
-                        userNumber.value.toString().toInt() > MAX_NUMBER -> {
-                            _userNumberText.value = ""
-                            _toast.value = Toasts.BIGGER
-                            attempts.value = attempts.value?.plus(1)
-                        }
-                        magicNumber.value == userNumber.value.toString().toInt() -> {
-                            _greetingText.value = getMessage(R.string.win)
-                            _userNumberFieldVisible.value = false
-                            _btnTryVisible.value = false
-                            _btnAgainVisible.value = true
-                            _smilePicture.value = Smiles.WIN
-                            _keyBoardVisible.value = false
-                        }
-                        (magicNumber.value ?: 0) > userNumber.value.toString().toInt() -> {
-                            _greetingText.value =
-                                getMessage(R.string.less, attempts.value)
-                            _userNumberFieldVisible.value = true
-                            _userNumberText.value = ""
-                            _btnTryVisible.value = true
-                            _btnAgainVisible.value = false
-                            _smilePicture.value = Smiles.SAD
-                        }
-                        (magicNumber.value ?: 0) < userNumber.value.toString().toInt() -> {
-                            _greetingText.value =
-                                getMessage(R.string.bigger, attempts.value)
-                            _userNumberFieldVisible.value = true
-                            _userNumberText.value = ""
-                            _btnTryVisible.value = true
-                            _btnAgainVisible.value = false
-                            _smilePicture.value = Smiles.SAD
-                        }
+
+        updateState()
+
+        Log.e("", "${magicNumber.value} - comp number")
+        Log.e("", "${userNumberText.value} - text value")
+    }
+
+    val string: String? = null
+
+    fun updateState() {
+        when {
+            magicNumber.value == userNumber.value.takeIf { it != null }?.toInt() -> {
+                _greetingText.value = getMessage(R.string.win)
+                _userNumberFieldVisible.value = false
+                _btnTryVisible.value = false
+                _btnAgainVisible.value = true
+                _smilePicture.value = Smiles.WIN
+                _keyBoardVisible.value = false
+            }
+            attempts.value!!.toInt() < 1 -> {
+                _greetingText.value = getMessage(R.string.loose, magicNumber.value)
+                _userNumberFieldVisible.value = false
+                _btnTryVisible.value = false
+                _btnAgainVisible.value = true
+                _smilePicture.value = Smiles.CRY
+                _keyBoardVisible.value = false
+            }
+            attempts.value!!.toInt() == ATTEMPTS_DEFAULT -> {
+                _greetingVisible.value = true
+                _greetingText.value =
+                    getMessage(R.string.play_greet, this.attempts.value)
+                _userNumberFieldVisible.value = true
+                _btnTryVisible.value = true
+                _btnAgainVisible.value = false
+                _smilePicture.value = Smiles.SMILE
+            }
+            attempts.value!!.toInt() < ATTEMPTS_DEFAULT -> {
+                _greetingText.value =
+                    getMessage(R.string.less, attempts.value)
+                _userNumberFieldVisible.value = true
+                _userNumberText.value = ""
+                _btnTryVisible.value = true
+                _btnAgainVisible.value = false
+                _smilePicture.value = Smiles.SAD
+            }
+            attempts.value!!.toInt() > 0 -> {
+                when {
+                    userNumber.value.toString().isEmpty() || userNumber.value.toString()
+                        .toInt() == 0 -> {
+                        _userNumberText.value = ""
+                        _toast.value = Toasts.EMPTY
+                        attempts.value = attempts.value?.plus(1)
                     }
-                }
-                attempts.value!!.toInt() < 1 -> {
-                    if (magicNumber.value == userNumber.value.toString().toInt()) {
-                        _greetingText.value = getMessage(R.string.win)
-                        _userNumberFieldVisible.value = false
-                        _btnTryVisible.value = false
-                        _btnAgainVisible.value = true
-                        _smilePicture.value = Smiles.WIN
-                        _keyBoardVisible.value = false
-                    } else {
-                        _greetingText.value = getMessage(R.string.loose, magicNumber.value)
-                        _userNumberFieldVisible.value = false
-                        _btnTryVisible.value = false
-                        _btnAgainVisible.value = true
-                        _smilePicture.value = Smiles.CRY
-                        _keyBoardVisible.value = false
+                    userNumber.value.toString().toInt() > MAX_NUMBER -> {
+                        _userNumberText.value = ""
+                        _toast.value = Toasts.BIGGER
+                        attempts.value = attempts.value?.plus(1)
+                    }
+                    (magicNumber.value ?: 0) > userNumber.value.toString().toInt() -> {
+                        _greetingText.value =
+                            getMessage(R.string.less, attempts.value)
+                        _userNumberFieldVisible.value = true
+                        _userNumberText.value = ""
+                        _btnTryVisible.value = true
+                        _btnAgainVisible.value = false
+                        _smilePicture.value = Smiles.SAD
+                    }
+                    (magicNumber.value ?: 0) < userNumber.value.toString().toInt() -> {
+                        _greetingText.value =
+                            getMessage(R.string.bigger, attempts.value)
+                        _userNumberFieldVisible.value = true
+                        _userNumberText.value = ""
+                        _btnTryVisible.value = true
+                        _btnAgainVisible.value = false
+                        _smilePicture.value = Smiles.SAD
                     }
                 }
             }
-
-        } catch (e: NumberFormatException) {
-
         }
-        Log.e("", "${magicNumber.value} - comp number")
-        Log.e("", "${userNumberText.value} - text value")
+
     }
 
     private fun getMessage(text: Int): String {

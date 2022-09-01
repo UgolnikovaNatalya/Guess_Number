@@ -21,6 +21,10 @@ import com.example.guessnumbernav.ViewModels.Smiles
 import com.example.guessnumbernav.ViewModels.Toasts
 import com.example.guessnumbernav.databinding.FragmentGameBinding
 
+private const val A = "A"
+private const val MN = "MN"
+private const val UN = "UN"
+
 class GameFragment : Fragment() {
 
     //bind
@@ -30,39 +34,49 @@ class GameFragment : Fragment() {
     //viewModel
     private val viewModel: GameViewModel by viewModels()
 
-    //restore magicNumber
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val t = savedInstanceState?.getInt("l")
-        viewModel.magicNumber.value = t
-    }
-
     //-------- o n C r e a t e V i e w -------------------
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ): View? {
+    ): View {
         Log.e("", "onCreateView f")
 
         _vb = FragmentGameBinding.inflate(inflater, container, false)
-        val view = vb.rootGame
 
-        setFragmentResultListener(KEY_MAGIC_NUMBER) { key, bundle ->
-            val res = bundle.getInt(KEY_MAGIC_BUNDLE)
-            viewModel.magicNumber.value = res
-        }
+        return vb.rootGame
+    }
 
-        setFragmentResultListener(KEY_USER_NUMBER) { key, bundle ->
-            val friendNumber = bundle.getString(KEY_USER_BUNDLE)
-            viewModel.magicNumber.value = friendNumber?.toInt()
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+//        val magicNumber = savedInstanceState?.getInt(MN)
+        val attempts = savedInstanceState?.getInt(A)
+        val magicNumber = arguments?.getInt("magicNumber")
+
+        Log.d("VB", "getting from args $magicNumber. bundle: $arguments")
+
+        // A -> B
+        // Bundle
+
+        // A <- B
+        // + setFragmentResultListener
+
+//        setFragmentResultListener(KEY_MAGIC_NUMBER) { key, bundle ->
+//            val res = bundle.getInt(KEY_MAGIC_BUNDLE)
+//            viewModel.magicNumber.value = res
+//        }
+
+//        setFragmentResultListener(KEY_USER_NUMBER) { key, bundle ->
+//            val friendNumber = bundle.getString(KEY_USER_BUNDLE)
+//            Log.d("VB", "magicnumber setting")
+//            viewModel.magicNumber.value = friendNumber?.toInt()
+//        }
+
 
         //focusing
         vb.playTryNumber.requestFocus()
-
-        viewModel.load()
 
         //* * * * * Game * * * *
         vb.playBtnTry.setOnClickListener {
@@ -142,12 +156,16 @@ class GameFragment : Fragment() {
         viewModel.scrollView.observe(viewLifecycleOwner) {
             vb.scroll.isVisible = it
         }
-        return view
+
+        viewModel.load(magicNumber, attempts)
     }
 
-    //save magicNumber
+    // 1. onSaveInstanceState - если твою апп прибьет система
+    // 2. viewModel
+    // 3. SP
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("l", viewModel.magicNumber.value?.toInt() ?: -1)
+        outState.putInt(MN, viewModel.magicNumber.value?.toInt() ?: -1)
+        outState.putInt(A, viewModel.attemptsField.value?.toInt() ?: -1)
     }
 }

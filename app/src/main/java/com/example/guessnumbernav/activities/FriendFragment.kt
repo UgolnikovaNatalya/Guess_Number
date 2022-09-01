@@ -47,9 +47,9 @@ class FriendFragment : Fragment() {
         vb.friendStartGameBtn.setOnClickListener {
 
             val friendNumber = vb.friendNumber.text.toString()
-
-            setFragmentResult(KEY_USER_NUMBER, bundleOf(KEY_USER_BUNDLE to friendNumber))
-            Log.e("fr", "$friendNumber - friendNumber FriendFragment setFragmentResult")
+//
+//            setFragmentResult(KEY_USER_NUMBER, bundleOf(KEY_USER_BUNDLE to friendNumber))
+//            Log.e("fr", "$friendNumber - friendNumber FriendFragment setFragmentResult")
             viewModel.startGame(friendNumber)
         }
 
@@ -112,9 +112,10 @@ class FriendFragment : Fragment() {
         }
 
         viewModel.nextFragment.observe(viewLifecycleOwner) { state ->
+            val friendNumber = vb.friendNumber.text.toString()
             when (state) {
                 true -> {
-                    findNavController().navigate(R.id.action_friend_to_game)
+                    findNavController().navigate(R.id.action_friend_to_game,  bundleOf("magicNumber" to friendNumber.toInt()))
                 }
                 false -> {}
             }
