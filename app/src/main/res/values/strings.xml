@@ -10,8 +10,8 @@
 
     <!--    Messages for play activity-->
     <string name="play_greet">Try to guess the magic number! \nYou have the only %1$s attempts!\nGood luck!</string>
-    <string name="bigger">Your number is bigger \nthan magic number!\n\nYou have %1$s attempts left.</string>
-    <string name="less">Your number is less \nthan magic number!\n\nYou have %1$s attempts left.</string>
+    <string name="bigger">Your number is bigger \nthan magic number!\nYou have %1$s attempts left.</string>
+    <string name="less">Your number is less \nthan magic number!\nYou have %1$s attempts left.</string>
     <string name="loose">You lost\.\.\.\nThe magic number was %1$s.</string>
     <string name="win">You win!</string>
 

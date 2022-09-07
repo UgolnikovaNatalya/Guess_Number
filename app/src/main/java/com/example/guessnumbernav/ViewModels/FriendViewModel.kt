@@ -41,16 +41,18 @@ class FriendViewModel(application: Application) : AndroidViewModel(application) 
         _keyboardVisible.value = true
     }
 
-    fun startGame(number: String) {
+    fun startGame(number: String){
         try {
             when {
                 number.isEmpty() || number.toInt() == 0 -> {
                     _friendNumberText.value = getMessage(R.string.empty)
                     _toast.value = Toasts.EMPTY
+                    return
                 }
                 number.toInt() > MAX_NUMBER -> {
                     _toast.value = Toasts.BIGGER
                     _friendNumberText.value = getMessage(R.string.empty)
+                    return
                 }
                 else -> {
                     _nextFragment.value = true

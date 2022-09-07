@@ -14,8 +14,7 @@ import com.example.guessnumbernav.R
 import com.example.guessnumbernav.ViewModels.ComputerViewModel
 import com.example.guessnumbernav.databinding.FragmentCompBinding
 
-const val KEY_MAGIC_NUMBER = "key"
-const val KEY_MAGIC_BUNDLE = "bundle"
+const val KEY_COMP_NUMBER = "KEY_COMP_NUMBER"
 
 class ComputerFragment() : Fragment(){
 
@@ -35,18 +34,20 @@ class ComputerFragment() : Fragment(){
         vb = FragmentCompBinding.inflate(inflater, container, false)
         val view = vb.root
 
+        val bundle = Bundle(
+
+        )
         viewModel.load()
 
         //generate number
         vb.compBtnGenerate.setOnClickListener {
             number = viewModel.generateNumber()
-
-            setFragmentResult(KEY_MAGIC_NUMBER, bundleOf(KEY_MAGIC_BUNDLE to number))
+            bundle.putInt(KEY_COMP_NUMBER, number)
         }
 
         //start game
         vb.compStartGameBtn.setOnClickListener {
-            view.findNavController().navigate(R.id.action_computer_to_game)
+            view.findNavController().navigate(R.id.action_computer_to_game, bundle)
         }
 
 //  ********************* O B S E R V E R S**************************

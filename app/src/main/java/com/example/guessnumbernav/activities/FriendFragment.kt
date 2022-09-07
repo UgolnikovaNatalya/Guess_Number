@@ -3,24 +3,20 @@ package com.example.guessnumbernav.activities
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
-import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.guessnumbernav.R
 import com.example.guessnumbernav.ViewModels.FriendViewModel
 import com.example.guessnumbernav.ViewModels.Toasts
 import com.example.guessnumbernav.databinding.FragmentFriendBinding
-const val KEY_USER_NUMBER = "KEY_USER_NUMBER"
-const val KEY_USER_BUNDLE = "KEY_USER_BUNDLE"
+const val KEY_FRIEND_NUMBER = "KEY_USER_NUMBER"
 
 class FriendFragment : Fragment() {
 
@@ -37,6 +33,8 @@ class FriendFragment : Fragment() {
         vb = FragmentFriendBinding.inflate(inflater, container, false)
         val view = vb.rootFriend
 
+        val bundle = Bundle()
+
         //focus
         vb.friendNumber.requestFocus()
 
@@ -45,11 +43,9 @@ class FriendFragment : Fragment() {
 
         //start game
         vb.friendStartGameBtn.setOnClickListener {
-
             val friendNumber = vb.friendNumber.text.toString()
-//
-//            setFragmentResult(KEY_USER_NUMBER, bundleOf(KEY_USER_BUNDLE to friendNumber))
-//            Log.e("fr", "$friendNumber - friendNumber FriendFragment setFragmentResult")
+            bundle.putInt(KEY_FRIEND_NUMBER, friendNumber.toInt())
+
             viewModel.startGame(friendNumber)
         }
 
@@ -80,20 +76,13 @@ class FriendFragment : Fragment() {
         }
 
         viewModel.toast.observe(viewLifecycleOwner) { toast ->
-            when (toast) {
-                Toasts.EMPTY -> {
-                    Toast.makeText(requireContext(), R.string.enter_number, Toast.LENGTH_SHORT)
-                        .show()
-                }
-                Toasts.BIGGER -> {
-                    Toast.makeText(requireContext(), R.string.number_is_bigger, Toast.LENGTH_SHORT)
-                        .show()
-                }
-                Toasts.ERROR -> {
-                    Toast.makeText(requireContext(), R.string.error_str_in_numb, Toast.LENGTH_SHORT)
-                        .show()
-                }
+            val message = when (toast!!) {
+                Toasts.EMPTY -> R.string.enter_number
+                Toasts.BIGGER -> R.string.number_is_bigger
+                Toasts.ERROR -> R.string.error_str_in_numb
             }
+            Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT)
+                .show()
         }
 
         viewModel.keyboardVisible.observe(viewLifecycleOwner) { state ->
@@ -112,10 +101,10 @@ class FriendFragment : Fragment() {
         }
 
         viewModel.nextFragment.observe(viewLifecycleOwner) { state ->
-            val friendNumber = vb.friendNumber.text.toString()
+
             when (state) {
                 true -> {
-                    findNavController().navigate(R.id.action_friend_to_game,  bundleOf("magicNumber" to friendNumber.toInt()))
+                    findNavController().navigate(R.id.action_friend_to_game, bundle)
                 }
                 false -> {}
             }

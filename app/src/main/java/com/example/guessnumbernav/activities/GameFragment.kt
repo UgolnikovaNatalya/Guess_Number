@@ -12,7 +12,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.guessnumbernav.R
@@ -51,35 +50,23 @@ class GameFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        val magicNumber = savedInstanceState?.getInt(MN)
         val attempts = savedInstanceState?.getInt(A)
-        val magicNumber = arguments?.getInt("magicNumber")
+        val magicNumber = when {
+            arguments?.getInt(KEY_FRIEND_NUMBER) == 0 -> arguments?.getInt(KEY_COMP_NUMBER)
+            else -> arguments?.getInt(KEY_FRIEND_NUMBER)
+        }
 
-        Log.d("VB", "getting from args $magicNumber. bundle: $arguments")
+//        val userMagNumber = arguments?.getString(KEY_USER_NUMBER)
 
-        // A -> B
-        // Bundle
 
-        // A <- B
-        // + setFragmentResultListener
-
-//        setFragmentResultListener(KEY_MAGIC_NUMBER) { key, bundle ->
-//            val res = bundle.getInt(KEY_MAGIC_BUNDLE)
-//            viewModel.magicNumber.value = res
-//        }
-
-//        setFragmentResultListener(KEY_USER_NUMBER) { key, bundle ->
-//            val friendNumber = bundle.getString(KEY_USER_BUNDLE)
-//            Log.d("VB", "magicnumber setting")
-//            viewModel.magicNumber.value = friendNumber?.toInt()
-//        }
-
+        Log.e("VB", "getting from args $magicNumber. bundle: $arguments")
 
         //focusing
         vb.playTryNumber.requestFocus()
 
         //* * * * * Game * * * *
         vb.playBtnTry.setOnClickListener {
+
             viewModel.userNumber.value = vb.playTryNumber.text.toString()
             viewModel.compareNumbers()
         }
@@ -129,7 +116,7 @@ class GameFragment : Fragment() {
         }
 
         viewModel.toast.observe(viewLifecycleOwner) { toast ->
-            val message = when (toast) {
+            val message = when (toast!!) {
                 Toasts.EMPTY -> R.string.enter_number
                 Toasts.BIGGER -> R.string.number_is_bigger
                 Toasts.ERROR -> R.string.error_str_in_numb
@@ -153,16 +140,9 @@ class GameFragment : Fragment() {
             }
         }
 
-        viewModel.scrollView.observe(viewLifecycleOwner) {
-            vb.scroll.isVisible = it
-        }
-
         viewModel.load(magicNumber, attempts)
     }
 
-    // 1. onSaveInstanceState - если твою апп прибьет система
-    // 2. viewModel
-    // 3. SP
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(MN, viewModel.magicNumber.value?.toInt() ?: -1)
