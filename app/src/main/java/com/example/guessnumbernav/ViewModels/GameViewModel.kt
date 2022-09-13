@@ -59,7 +59,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     // *************** L O A D ******************
-    fun load(magicNumber: Int?, attempts: Int?) {
+    fun load(magicNumber: Int?, attempts: Int?, usrNumber: Int?) {
 
         _greetingVisible.value = true
         _smileVisible.value = true
@@ -69,6 +69,9 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
 
         if (magicNumber != null) {
             this.magicNumber.value = magicNumber
+        }
+        if (usrNumber != null){
+            this.userNumber.value = usrNumber.toString()
         }
 
         updateState()
@@ -80,19 +83,14 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
             _toast.value = Toasts.EMPTY
             return
         }
-
         _attempts.value = _attempts.value?.minus(1)
 
         updateState()
-
-        Log.e("", "${magicNumber.value} - comp number")
-        Log.e("", "${userNumberText.value} - text value")
     }
 
     val string: String? = null
 
     fun updateState() {
-
         when {
             magicNumber.value == userNumber.value.takeIf { it != null }?.toInt() -> {
                 _greetingText.value = getMessage(R.string.win)
@@ -122,7 +120,13 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                 _smilePicture.value = Smiles.SMILE
             }
             _attempts.value!!.toInt() < ATTEMPTS_DEFAULT -> {
-                if (magicNumber.value!! > (userNumber.value.takeIf { it != null }?.toInt() ?: 0)){
+                if (userNumber.value.toString().toInt() > MAX_NUMBER){
+                    _userNumberText.value = ""
+                    _toast.value = Toasts.BIGGER
+                    _attempts.value = _attempts.value?.plus(1)
+                    return
+                }
+                else if (magicNumber.value!! > (userNumber.value.takeIf { it != null }?.toInt() ?: 0)){
                     _greetingText.value =
                         getMessage(R.string.less, _attempts.value)
 
@@ -152,11 +156,7 @@ class GameViewModel(application: Application) : AndroidViewModel(application) {
                     }
                 }
             }
-            userNumber.value.toString().toInt() > MAX_NUMBER -> {
-                _userNumberText.value = ""
-                _toast.value = Toasts.BIGGER
-                _attempts.value = _attempts.value?.plus(1)
-            }
+
             (magicNumber.value ?: 0) > userNumber.value.toString().toInt() -> {
                 _greetingText.value =
                     getMessage(R.string.less, _attempts.value)

@@ -51,12 +51,11 @@ class GameFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val attempts = savedInstanceState?.getInt(A)
+        val usrNumber = savedInstanceState?.getInt(UN)
         val magicNumber = when {
             arguments?.getInt(KEY_FRIEND_NUMBER) == 0 -> arguments?.getInt(KEY_COMP_NUMBER)
             else -> arguments?.getInt(KEY_FRIEND_NUMBER)
         }
-
-//        val userMagNumber = arguments?.getString(KEY_USER_NUMBER)
 
 
         Log.e("VB", "getting from args $magicNumber. bundle: $arguments")
@@ -66,7 +65,6 @@ class GameFragment : Fragment() {
 
         //* * * * * Game * * * *
         vb.playBtnTry.setOnClickListener {
-
             viewModel.userNumber.value = vb.playTryNumber.text.toString()
             viewModel.compareNumbers()
         }
@@ -140,12 +138,13 @@ class GameFragment : Fragment() {
             }
         }
 
-        viewModel.load(magicNumber, attempts)
+        viewModel.load(magicNumber, attempts, usrNumber)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(MN, viewModel.magicNumber.value?.toInt() ?: -1)
         outState.putInt(A, viewModel.attemptsField.value?.toInt() ?: -1)
+        viewModel.userNumber.value.takeIf { it != null }?.toInt()?.let { outState.putInt(UN, it) }
     }
 }
