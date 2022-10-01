@@ -6,7 +6,8 @@
 ## 1. На начальном экране выбираем с кем будем играть<br/>
 <img src="https://github.com/UgolnikovaNatalya/Guess_Number/blob/master/ScreenShots/1start.png" width ="150">
 <br/>
-## 2. В зависимости от выбора, либо число генерируется, либо его вводит друг<br/>
+## 2. В зависимости от выбора, либо число генерируется, либо его вводит друг
+<br/>
 ### Если игра с Android то последовательность будет такая:
 <br\>
 <img src="https://github.com/UgolnikovaNatalya/Guess_Number/blob/master/ScreenShots/2andr_game.png" width ="150"> <t\>
