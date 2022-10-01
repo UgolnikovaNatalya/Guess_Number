@@ -4,7 +4,7 @@
 <br/>
 <br/>
 ## На начальном экране можно выбрать с кем играть<br/>
-<img src="https://github.com/UgolnikovaNatalya/Guess_Number/blob/master/ScreenShots/222start_game_andr.png" width ="375">
+<img src="https://github.com/UgolnikovaNatalya/Guess_Number/blob/master/ScreenShots/1start.png" width ="375">
 <br/>Правила игры просты:
 1. Друг или Android загадывают число от 1 до 100. 
 2. У вас есть 7 попыток отгадать число, которое было загадано.
